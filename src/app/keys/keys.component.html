@@ -1,0 +1,7 @@
+<ul>
+  <li
+    [class]="key.type + ' ' + key.key " *ngFor="let key of keys"
+    (click)="onClick($event, key)">
+    <span class="keycode">{{key.control}}</span>
+  </li>
+</ul>

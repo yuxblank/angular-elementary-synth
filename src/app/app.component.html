@@ -7,11 +7,11 @@
   <h2>OSC</h2>
   <div class="control">
     <h3>OSC A</h3>
-    <mat-slider min="0" max="440" step="1" value="200" (change)="oscAFreqChange($event)"></mat-slider>
+    <mat-slider min="0" max="440" step="1" [value]="initialSnapshot.oscAFreq" (change)="oscAFreqChange($event)"></mat-slider>
   </div>
   <div class="control">
     <h3>OSC B</h3>
-    <mat-slider min="0" max="440" step="1" value="200" (change)="oscBFreqChange($event)"></mat-slider>
+    <mat-slider min="0" max="440" step="1" [value]="initialSnapshot.oscBFreq" (change)="oscBFreqChange($event)"></mat-slider>
   </div>
 </div>
 
@@ -19,11 +19,14 @@
   <h2>FILTER</h2>
   <div class="control">
     <h3>Cutoff</h3>
-    <mat-slider min="100" max="440" step="1" value="0" (change)="filterCutOffChange($event)"></mat-slider>
+    <mat-slider min="100" max="440" step="0.1" [value]="initialSnapshot.filter.cutOff" (change)="filterCutOffChange($event)"></mat-slider>
   </div>
   <div class="control">
     <h3>Resonance</h3>
-    <mat-slider min="0" max="1" step="0.1" value="0" (change)="filterResoChange($event)"></mat-slider>
+    <mat-slider min="0" max="1" step="0.01" [value]="initialSnapshot.filter.resonance" (change)="filterResoChange($event)"></mat-slider>
   </div>
+</div>
 
+<div class="keys">
+  <app-keys (onKeyDown)="onKeyDown($event)" (onKeyUp)="onKeyUp($event)"></app-keys>
 </div>

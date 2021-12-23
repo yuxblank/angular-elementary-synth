@@ -3,6 +3,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 
 import {AppModule} from './app/app.module';
 import {environment} from './environments/environment';
+import {LogLevel, PLATFORM_CONSOLE_LOGGER, RNgPlatformLogger} from "rng-logger";
 
 
 // @ts-ignore
@@ -28,6 +29,12 @@ if (environment.production) {
 
 Promise.all([
     platformBrowserDynamic([
+      RNgPlatformLogger({
+        level : LogLevel.DEBUG,
+        maxBuffer: 50,
+        nonResolvedStrategy: "ERROR"
+      }),
+      PLATFORM_CONSOLE_LOGGER,
       {provide: "elementary.el", useValue: el},
       {provide: "elementary.core", useValue: core},
       {provide: "AudioContext", useValue: ctx}

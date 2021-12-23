@@ -5,10 +5,12 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatSliderModule} from "@angular/material/slider";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
+import { KeysComponent } from './keys/keys.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    KeysComponent
   ],
   imports: [
     BrowserModule,

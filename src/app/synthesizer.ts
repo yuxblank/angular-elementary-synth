@@ -1,49 +1,77 @@
 import {Inject, Injectable} from '@angular/core';
 import {Oscillator} from "./osciallator";
-import {BehaviorSubject, filter} from "rxjs";
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  iif,
+  mergeMap,
+  Observable,
+  Subject,
+  takeUntil,
+  takeWhile,
+  tap
+} from "rxjs";
 import {cloneDeep, merge} from 'lodash';
 
 
-class SynthesizerState {
-  oscAFreq?: number = 0
-  oscBFreq?: number = 0
-  filter?: {
-    cutOff? : number
-    resonance? : number
+export class SynthesizerState {
+
+  isActive: boolean = false
+  oscAFreq: number = 200
+  oscBFreq: number = 200
+  filter: {
+    cutOff: number
+    resonance: number
   } = {
-    resonance: 0,
-    cutOff: 0
+    resonance: 0.5,
+    cutOff: 200
   }
 }
 
+interface Voice { gate: number, freq: number };
 
 @Injectable({
   providedIn: 'root'
 })
 export class Synthesizer {
-  private state: BehaviorSubject<SynthesizerState> = new BehaviorSubject<SynthesizerState>(new SynthesizerState())
+  private _state: BehaviorSubject<SynthesizerState> = new BehaviorSubject<SynthesizerState>(new SynthesizerState())
+  private _voices: BehaviorSubject<Voice[]> = new BehaviorSubject<Voice[]>([])
 
   constructor(private oscillator: Oscillator, @Inject("elementary.core") private core: any, @Inject("elementary.el") private el: any) {
 
-    this.state
+
+    combineLatest(this._state, this._voices)
       .pipe(
-      ).subscribe(
-      next => {
-        this.core.render(...this.outputs(next))
-      }
-    )
+        filter(([s, v]) => s.isActive),
+        tap(([s, v]) => {
+          this.core.render(...this.outputs(s))
+        })
+      ).subscribe()
   }
 
-  update(state: SynthesizerState) {
-    let current = this.state.getValue();
-    merge(current, state);
-    this.state.next(current)
+
+  get stateSnapshot(): SynthesizerState {
+    return this._state.getValue()
+  }
+
+
+  set isActive(value: boolean) {
+    let st = this._state.getValue();
+    st.isActive = value;
+    this._state.next(st)
+  }
+
+  patch(patch: any) {
+    let current = this._state.getValue();
+    merge(current, patch);
+    this._state.next(current)
   }
 
   private outputs(current: SynthesizerState): any {
 
     const tone1 = this.oscillator.sine(
-     this.el.phasor(
+      this.el.phasor(
         current.oscAFreq
       )
     )
@@ -59,5 +87,12 @@ export class Synthesizer {
       out = this.el.lowpass(current.filter.cutOff, current.filter.resonance, out);
     }
     return [out, out]
+  }
+
+  private synth(vs: { gate: number, freq: number }[]) {
+    return this.el.add(vs.map(v => {
+        return this.el.mul(v.gate, this.el.cycle(v.freq));
+      })
+    )
   }
 }
