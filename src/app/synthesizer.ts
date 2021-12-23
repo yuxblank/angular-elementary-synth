@@ -29,7 +29,7 @@ export class Synthesizer {
       .pipe(
       ).subscribe(
       next => {
-        this.core.render(...this.outputs())
+        this.core.render(...this.outputs(next))
       }
     )
   }
@@ -40,11 +40,7 @@ export class Synthesizer {
     this.state.next(current)
   }
 
-  private outputs(): any {
-
-
-    let current = this.state.getValue();
-
+  private outputs(current: SynthesizerState): any {
 
     const tone1 = this.oscillator.sine(
       this.el.add(this.el.phasor(
@@ -57,7 +53,6 @@ export class Synthesizer {
         current.oscBFreq
       ))
     )
-
 
     let out = this.el.add(tone1, tone2)
     if (current.filter) {

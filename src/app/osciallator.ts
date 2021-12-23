@@ -11,5 +11,4 @@ export class Oscillator {
   sine(sampleRate?: number) {
     return this.el.sin(this.el.mul(2 * Math.PI, sampleRate));
   }
-
 }
