@@ -43,15 +43,15 @@ export class Synthesizer {
   private outputs(current: SynthesizerState): any {
 
     const tone1 = this.oscillator.sine(
-      this.el.add(this.el.phasor(
+     this.el.phasor(
         current.oscAFreq
-      ))
+      )
     )
 
     const tone2 = this.oscillator.sine(
-      this.el.add(this.el.phasor(
+      this.el.phasor(
         current.oscBFreq
-      ))
+      )
     )
 
     let out = this.el.add(tone1, tone2)
